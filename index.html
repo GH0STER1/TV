@@ -1,63 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fullscreen APK Emulator with Remote Support</title>
-    <style>
-        body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        iframe {
-            border: none;
-            width: 400px;
-            height: 800px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fullscreen APK Emulator with Remote Support</title>
+  <style>
+    /* Make html and body take full screen */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+    /* Container for potential additional content if needed */
+    #container {
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      position: relative;
+    }
+    /* Fullscreen iframe styling */
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
+    /* Fullscreen button styling (optional) */
+    #fullscreen-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <h1>Run APK in Fullscreen</h1>
-    <button onclick="openFullscreen()">Go Fullscreen</button>
-    <br><br>
-    <iframe id="apkFrame" src="https://appetize.io/app/b_va5llnunpkqho2btjpwspnykse?autoplay=true&device=pixel4"></iframe>
+  <div id="container">
+    <button id="fullscreen-btn" onclick="openFullscreen()">Go Fullscreen</button>
+    <iframe id="apkFrame" 
+            src="https://appetize.io/embed/b_va5llnunpkqho2btjpwspnykse?autoplay=true&device=pixel4&hide_controls=true&scale=fit">
+    </iframe>
+  </div>
+  <script>
+    let frame = document.getElementById("apkFrame");
 
-    <script>
-        let frame = document.getElementById("apkFrame");
+    function openFullscreen() {
+      if (frame.requestFullscreen) {
+        frame.requestFullscreen();
+      } else if (frame.mozRequestFullScreen) { 
+        frame.mozRequestFullScreen();
+      } else if (frame.webkitRequestFullscreen) { 
+        frame.webkitRequestFullscreen();
+      } else if (frame.msRequestFullscreen) { 
+        frame.msRequestFullscreen();
+      }
+    }
 
-        function openFullscreen() {
-            if (frame.requestFullscreen) {
-                frame.requestFullscreen();
-            } else if (frame.mozRequestFullScreen) { 
-                frame.mozRequestFullScreen();
-            } else if (frame.webkitRequestFullscreen) { 
-                frame.webkitRequestFullscreen();
-            } else if (frame.msRequestFullscreen) { 
-                frame.msRequestFullscreen();
-            }
-        }
+    // Capture TV remote key events and send them to the iframe
+    document.addEventListener("keydown", function(event) {
+      const remoteKeys = {
+        "ArrowUp": "ArrowUp",
+        "ArrowDown": "ArrowDown",
+        "ArrowLeft": "ArrowLeft",
+        "ArrowRight": "ArrowRight",
+        "Enter": "Enter",
+        "Backspace": "Back"
+      };
 
-        // Capture TV remote key events
-        document.addEventListener("keydown", function(event) {
-            const remoteKeys = {
-                "ArrowUp": "ArrowUp",
-                "ArrowDown": "ArrowDown",
-                "ArrowLeft": "ArrowLeft",
-                "ArrowRight": "ArrowRight",
-                "Enter": "Enter",
-                "Backspace": "Back"
-            };
-
-            if (remoteKeys[event.key]) {
-                frame.contentWindow.postMessage({ key: remoteKeys[event.key] }, "*");
-            }
-        });
-    </script>
+      if (remoteKeys[event.key]) {
+        frame.contentWindow.postMessage({ key: remoteKeys[event.key] }, "*");
+      }
+    });
+  </script>
 </body>
 </html>
