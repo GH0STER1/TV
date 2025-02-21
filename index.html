@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen APK Emulator with Remote Support</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        iframe {
+            border: none;
+            width: 400px;
+            height: 800px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Run APK in Fullscreen</h1>
+    <button onclick="openFullscreen()">Go Fullscreen</button>
+    <br><br>
+    <iframe id="apkFrame" src="https://appetize.io/embed/b_va5llnunpkqho2btjpwspnykse?autoplay=true&device=pixel4"></iframe>
+
+    <script>
+        let frame = document.getElementById("apkFrame");
+
+        function openFullscreen() {
+            if (frame.requestFullscreen) {
+                frame.requestFullscreen();
+            } else if (frame.mozRequestFullScreen) { 
+                frame.mozRequestFullScreen();
+            } else if (frame.webkitRequestFullscreen) { 
+                frame.webkitRequestFullscreen();
+            } else if (frame.msRequestFullscreen) { 
+                frame.msRequestFullscreen();
+            }
+        }
+
+        // Capture TV remote key events
+        document.addEventListener("keydown", function(event) {
+            const remoteKeys = {
+                "ArrowUp": "ArrowUp",
+                "ArrowDown": "ArrowDown",
+                "ArrowLeft": "ArrowLeft",
+                "ArrowRight": "ArrowRight",
+                "Enter": "Enter",
+                "Backspace": "Back"
+            };
+
+            if (remoteKeys[event.key]) {
+                frame.contentWindow.postMessage({ key: remoteKeys[event.key] }, "*");
+            }
+        });
+    </script>
+</body>
+</html>
